@@ -4,7 +4,7 @@ from db.dao import Dao
 class MySQLDao(Dao):
     def get_tables(self, _schema):
         with self.db.cursor(dictionary=True) as cursor_get_tables:
-            sql = ("SELECT table_name FROM information_schema.tables WHERE table_schema = %s AND table_type = "
+            sql = ("SELECT table_name, table_comment FROM information_schema.tables WHERE table_schema = %s AND table_type = "
                    "'BASE TABLE'")
             cursor_get_tables.execute(sql, (_schema,))
             return cursor_get_tables.fetchall()
@@ -12,7 +12,8 @@ class MySQLDao(Dao):
     def get_columns(self, _schema, _table):
         with self.db.cursor(dictionary=True) as cursor_get_columns:
             sql = ("SELECT table_name, column_name, is_nullable, column_default, column_comment, "
-                   "column_key, data_type, character_maximum_length FROM information_schema.columns WHERE table_schema = %s AND table_name = %s")
+                   "column_key, data_type, character_maximum_length FROM information_schema.columns "
+                   "WHERE table_schema = %s AND table_name = %s ORDER BY ordinal_position")
             cursor_get_columns.execute(sql, (_schema, _table,))
             return cursor_get_columns.fetchall()
 
